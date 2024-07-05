@@ -3,32 +3,45 @@
 
 # 安装 runner 服务
 
-## Linux
+1. 到 https://github.com/tongxinzhiwu/runner/releases 下载对应平台的 runner
+2. 检查校验和，例如 linux-amd64 的：`echo "$(cat runner-linux-amd64.sha256)  runner-linux-amd64" | shasum -a 256 -c -`
+3. 在平台上添加运行器，注册token：https://efficacy.makeblock.com/#/cicd/runner
+4. 执行注册命令，注册完成会在当前目录下生成 `.runner` 文件：
+> runner register --name={runnerName} --instance=https://pipeline.makeblock.com --labels=label1,label2 --token=ac69207dcfc6443381fcc7ac5a294f65
+- 这里的name和token需要替换成自己的，
+- labels可以自定义，后期任务的执行可以通过选择label来分配到指定runner去执行，
+- instance是服务端的地址
+
+
+## 启动 Runner 服务（必须先完成注册）
+
+### Linux
 
 > linux下可以使用systemd来创建服务: https://systemd.io/
 
 Systemd service 方式启动
 
-> 注意：需要先注册生成 `.runner` 文件放到工作目录下
-
 ```bash
-/etc/systemd/system/runner.service
 [Unit]
 Description=runner
 Documentation=https://git.makeblock.com/makeblock-devops/pipeline
 
 [Service]
-ExecStart=/usr/local/bin/runner run
+ExecStart=/home/makeblock/devops/runner-linux-amd64 run
 ExecReload=/bin/kill -s HUP $MAINPID
 WorkingDirectory=/var/lib/runner
 TimeoutSec=0
 RestartSec=10
 Restart=always
 User=root
+Environment="CAPACITY=12" # 设置runner的并发执行任务数
+Environment="REPORT_METRIC=false" # 是否上报metric(非核心runner可以不用上报)
 
 [Install]
 WantedBy=multi-user.target
 ```
+
+启动服务
 
 ```bash
 # load the new systemd unit file
@@ -45,9 +58,17 @@ systemctl status runner.service
 journalctl -e -u runner.service
 ```
 
-## Mac
+### Mac
 
 > mac下使用launchctl来创建服务：https://www.launchd.info/
+
+创建文件
+
+```text
+/Library/LaunchAgents/com.makeblock.pipeline.runner.plist
+```
+
+> 将下面的内容复制到文件中，注意修改二进制可执行文件路径成自己的 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -64,7 +85,8 @@ journalctl -e -u runner.service
     <true/>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/makeblock/pipeline/runner/runner.sh</string>
+        <string>/Users/makeblock/pipeline/runner/runner-osx-arm64</string>
+        <string>run</string>
     </array>
     <key>StandardOutPath</key>
     <string>/Users/makeblock/pipeline/runner/stdout.log</string>
@@ -83,18 +105,14 @@ journalctl -e -u runner.service
 
 ```bash
 sudo launchctl load -w /Library/LaunchAgents/com.makeblock.pipeline.runner.plist
+launchctl list | grep runner
 ```
 
-## Windows
+### Windows
 
-> windows下可以使用nssm或者sc来创建服务：https://nssm.cc/download/
+创建一个bat文件，注意根据自己的环境修改可执行文件的路径，内容如下：
 
-```shell
-sc create RunnerService binPath= "C:\path\to\your\runner run"
-sc config RunnerService start= auto
-sc start RunnerService
-sc stop RunnerService
-```
+创建 runner.bat 文件
 
 ```bat
 @echo off
@@ -110,3 +128,13 @@ if not exist "%EXE_PATH%" (
 
 endlocal
 ```
+
+> windows下可以使用nssm或者sc来创建服务（实现服务的自启），需要先下载安装：https://nssm.cc/download/
+
+```shell
+sc create RunnerService binPath= "C:\path\to\your\runner.bat"
+sc config RunnerService start=auto
+sc start RunnerService
+sc stop RunnerService
+```
+

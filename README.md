@@ -131,6 +131,33 @@ endlocal
 
 > windows下可以使用nssm或者sc来创建服务（实现服务的自启），需要先下载安装：https://nssm.cc/download/
 
+使用 nssm 创建服务
+![img.png](img.png)
+
+```shell
+1. 安装服务：nssm install 服务名称
+2. 删除服务：nssm remove 服务名称
+3. 删除服务确定：nssm remove 服务名称 confirm
+4. 修改服务（显示界面修改）：nssm edit 服务名称
+5. 启动服务：nssm start 服务名称
+6. 停止服务：nssm stop 服务名名称
+7. 停止服务：nssm stop 服务名称
+```
+exmaple:
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+![img_3.png](img_3.png)
+```shell
+1. 在当前路径进入cmd控制台 
+nssm start run.bat
+
+2. 即可看到服务已经启动在系统管理后台，如上图所示
+
+3. 也可配置失败自启动信息，如上图所示
+
+```
+
+
 ```shell
 sc create RunnerService binPath= "C:\path\to\your\runner.bat"
 sc config RunnerService start=auto

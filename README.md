@@ -158,6 +158,13 @@ nssm start run.bat
 ```
 
 
+更新 run.bat 日志输出路径
+1. 进入run.bat 目录
+2. 从当前目录进入cmd目录
+3. 执行命令：nssm edit run.bat
+![img_4.png](img_4.png)
+
+
 ```shell
 sc create RunnerService binPath= "C:\path\to\your\runner.bat"
 sc config RunnerService start=auto

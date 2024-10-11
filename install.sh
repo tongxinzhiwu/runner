@@ -13,11 +13,13 @@ ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
 echo [INFO] OS=$OS
 echo [INFO] ARCH=$ARCH
 
+# adapt windows
+if [[ "$OS" =~ msys* ]] || [[ "$OS" =~ mingw* ]] || [[ "$OS" =~ cygwin* ]] || [[ "$OS" =~ windows* ]]; then
+  OS="windows"
+fi
+
 if [ "x86_64" = "$ARCH" ]; then
-  # x86_64 is the default skip linux
-  if [ "linux" != "$OS" ]; then
-     ARCH=""
-  fi
+  ARCH="amd64"
 fi
 
 if [ "aarch64" = "$ARCH" ];then

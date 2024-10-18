@@ -13,7 +13,7 @@ bash -c "$(curl --insecure -fsSL https://raw.githubusercontent.com/tongxinzhiwu/
 2. 检查校验和，例如 linux-amd64 
 
 ```bash
-`echo "$(cat runner.sha256)  runner" | shasum -a 256 -c -`
+echo "$(cat runner.sha256)  runner" | shasum -a 256 -c -
 ```
 
 3. 向管理员申请在平台上创建一个token，复制其注册的命令到机器上执行，例如：

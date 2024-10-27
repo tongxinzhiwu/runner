@@ -58,10 +58,24 @@ tar -xzf runner.tar.gz
 echo [INFO] Installing runner...
 
 RUNNER_PATH="runner-$OS-$ARCH/runner"
+
+# if is windows, add .exe
+if [ "$OS" = "windows" ]; then
+  RUNNER_PATH="$RUNNER_PATH.exe"
+fi
+
 chmod +x "$RUNNER_PATH"
+
 # make sure /usr/local/bin exists and is writable
-sudo mkdir -p /usr/local/bin
-sudo mv "$RUNNER_PATH" /usr/local/bin/runner
+BIN_PATH="${HOME}"/.runner/runner
+mkdir -p "$BIN_PATH"
+mv "$RUNNER_PATH" "$BIN_PATH"
+
+# export path
+echo [INFO] Adding "$BIN_PATH" to PATH...
+echo "export PATH=\$PATH:$BIN_PATH" >> ~/.bashrc
+source ~/.bashrc
+echo "when you os is windows, please add $BIN_PATH to your PATH"
 
 # cleanup
 echo [INFO] Cleaning up...

@@ -73,9 +73,9 @@ mv "$RUNNER_PATH" "$BIN_PATH"
 
 # export path
 echo [INFO] Adding "$BIN_PATH" to PATH...
-echo "export PATH=\$PATH:$BIN_PATH" >> ~/.bashrc
-source ~/.bashrc
-echo "when you os is windows, please add $BIN_PATH to your PATH"
+echo "export PATH=\$PATH:$BIN_PATH" >> ~/.profile
+source ~/.profile
+echo "the runner bin path is $BIN_PATH"
 
 # cleanup
 echo [INFO] Cleaning up...

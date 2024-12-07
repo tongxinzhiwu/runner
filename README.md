@@ -38,7 +38,10 @@ runner install
 默认是是以系统服务的方式启动，如果需要配置成用户启动可以通过 `-U` 参数来指定，更多参数可以通过 `runner --help` 查看
 
 ```shell
+# linux user service
 runner install -U
+# windows user service
+./runner.exe install -u ".\makeblock" -p "123456" -U
 ```
 
 如果需要自定义改动配置可以参考：[手动配置](./INSTALL.md)
